@@ -1,9 +1,9 @@
 #include "libft.h"
 
-void    bzero(void *str, size_t size)
+void    *ft_bzero(void *str, size_t num)
 {
     void    *strtemp;
     
-    strtemp = ft_memset(str, 0, size);
+    strtemp = ft_memset(str, 0, num);
     return (strtemp);
 }
