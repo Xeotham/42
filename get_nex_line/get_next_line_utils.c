@@ -6,7 +6,7 @@
 /*   By: mhaouas <mhaouas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:10:08 by mhaouas           #+#    #+#             */
-/*   Updated: 2023/11/16 19:30:18 by mhaouas          ###   ########.fr       */
+/*   Updated: 2023/11/17 15:34:01 by mhaouas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	is_new_line(char *buff)
 		i++;
 	}
 	if (buff[i] == '\n')
-		return (i);
+		return (i + 1);
 	return (-1);
 }
 
@@ -68,5 +68,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	if (!array)
 		return (NULL);
 	array = ft_strcat(s1, s2, array);
+	free(s1);
 	return (array);
 }
