@@ -1,28 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memset.c                                        :+:      :+:    :+:   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhaouas <mhaouas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/30 16:59:50 by mhaouas           #+#    #+#             */
-/*   Updated: 2023/10/31 09:42:22 by mhaouas          ###   ########.fr       */
+/*   Created: 2023/11/05 12:44:08 by mhaouas           #+#    #+#             */
+/*   Updated: 2023/11/06 14:14:02 by mhaouas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_memset(void *str, int value, size_t num)
+static void	recurse(int nb, int fd)
 {
-	unsigned char	*str2;
-	size_t			i;
+	char	nb2;
 
-	str2 = (unsigned char *)str;
-	i = 0;
-	while (i < num)
+	nb2 = 0;
+	if (nb > 9)
 	{
-		str2[i] = value;
-		i++;
+		recurse(nb / 10, fd);
 	}
-	return (str);
+	nb2 = (nb % 10) + '0';
+	write(fd, &nb2, 1);
+}
+
+void	ft_putnbr_fd(int nb, int fd)
+{
+	if (nb == -2147483648)
+	{
+		write(fd, "-2147483648", 11);
+		return ;
+	}
+	if (nb < 0)
+	{
+		nb *= -1;
+		write(fd, "-", 1);
+	}
+	recurse(nb, fd);
 }

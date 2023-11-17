@@ -1,0 +1,107 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_split.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaouas <mhaouas@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/02 18:16:49 by mhaouas           #+#    #+#             */
+/*   Updated: 2023/11/06 17:03:50 by mhaouas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+#include <stdio.h>
+
+static void	free_all(char **buff)
+{
+	int	i;
+
+	i = 0;
+	while (buff[i])
+	{
+		free(buff[i]);
+		i++;
+	}
+	free(buff);
+}
+
+static int	count_word(char const *s, char sep)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	while (s[i] == sep)
+		i++;
+	if ((s[i] == 0))
+		return (0);
+	count = 1;
+	while (s[i])
+	{
+		if ((s[i] == sep) && (s[i + 1] != sep) && (ft_isprint(s[i + 1]) == 1))
+		{
+			count += 1;
+			i++;
+		}
+		else
+			i++;
+	}
+	return (count);
+}
+
+static int	count_char(char *s, char sep)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while ((s[i] != sep) && s[i])
+	{
+		count++;
+		i++;
+	}
+	return (count);
+}
+
+static char	**split_format(char **buff, char const *s, char sep)
+{
+	int	i;
+	int	g;
+	int	count;
+
+	i = 0;
+	g = 0;
+	while (s[i])
+	{
+		while (s[i] == sep)
+			i++;
+		if (s[i] == '\0')
+			break ;
+		count = count_char((char *)s + i, sep);
+		buff[g] = ft_substr(s, i, count);
+		if (!buff[g])
+		{
+			free_all(buff);
+			return (NULL);
+		}
+		i += count;
+		g++;
+	}
+	buff[g] = NULL;
+	return (buff);
+}
+
+char	**ft_split(char const *s, char sep)
+{
+	char	**buff;
+
+	if (!s)
+		return (NULL);
+	buff = (char **)malloc(sizeof(char *) * (count_word(s, sep) + 1));
+	if (!buff)
+		return (NULL);
+	buff = split_format(buff, s, sep);
+	return (buff);
+}

@@ -1,28 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memset.c                                        :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhaouas <mhaouas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/30 16:59:50 by mhaouas           #+#    #+#             */
-/*   Updated: 2023/10/31 09:42:22 by mhaouas          ###   ########.fr       */
+/*   Created: 2023/10/31 11:14:05 by mhaouas           #+#    #+#             */
+/*   Updated: 2023/11/02 13:01:05 by mhaouas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_memset(void *str, int value, size_t num)
+void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	unsigned char	*str2;
-	size_t			i;
+	size_t	i;
+	size_t	j;
+	char	*desttmp;
+	char	*srctmp;
+	char	*tmp;
 
-	str2 = (unsigned char *)str;
+	desttmp = (char *)dest;
+	srctmp = (char *)src;
+	tmp = srctmp;
 	i = 0;
-	while (i < num)
+	j = n - 1;
+	if (dest > src)
 	{
-		str2[i] = value;
-		i++;
+		while (i < n)
+		{
+			desttmp[j] = tmp[j];
+			i++;
+			j--;
+		}
 	}
-	return (str);
+	else
+		desttmp = ft_memcpy(dest, src, n);
+	return (dest);
 }
