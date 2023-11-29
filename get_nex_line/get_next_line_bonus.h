@@ -1,19 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhaouas <mhaouas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/05 12:19:38 by mhaouas           #+#    #+#             */
-/*   Updated: 2023/11/05 12:30:21 by mhaouas          ###   ########.fr       */
+/*   Created: 2023/11/10 12:10:11 by mhaouas           #+#    #+#             */
+/*   Updated: 2023/11/17 14:03:36 by mhaouas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 
-void	ft_putendl_fd(char *s, int fd)
-{
-	ft_putstr_fd(s, fd);
-	write(fd, "\n", 1);
-}
+# include <stdlib.h>
+# include <unistd.h>
+
+char	*get_next_line(int fd);
+char	*ft_strjoin(char *s1, char *s2);
+char	*gnl_loop(char *storage, int fd);
+int		is_new_line(char *buff);
+char	*ft_strcat(char *s1, char *s2, char *array);
+size_t	ft_strlen(const char *s);
+char	*dup_to_new_line(char *storage);
+
+#endif

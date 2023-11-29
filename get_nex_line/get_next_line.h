@@ -19,7 +19,7 @@
 char	*get_next_line(int fd);
 char	*ft_strjoin(char *s1, char *s2);
 char	*gnl_loop(char *storage, int fd);
-int	    is_new_line(char *buff);
+int		is_new_line(char *buff);
 char	*ft_strcat(char *s1, char *s2, char *array);
 size_t	ft_strlen(const char *s);
 char	*dup_to_new_line(char *storage);

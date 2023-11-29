@@ -1,0 +1,17 @@
+root pswrd = vm42Rpwd
+upwd = vm42Upwd
+passphrase = vm42passphrase
+
+--------
+2.0
+--------
+roor password = RootPwd42
+User password = UserPwd42
+passphrase = Passphrase42
+
+--------
+3.0
+--------
+Root password = RootPassword42
+User Password = UserPassword42
+passphrase = Passphrase42

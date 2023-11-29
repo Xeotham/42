@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhaouas <mhaouas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 12:10:14 by mhaouas           #+#    #+#             */
-/*   Updated: 2023/11/20 13:25:18 by mhaouas          ###   ########.fr       */
+/*   Updated: 2023/11/20 13:26:27 by mhaouas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,19 @@ char	*new_storage(char *storage)
 	if (!storage)
 		return (NULL);
 	nb_to_line = is_new_line(storage);
-	if (nb_to_line < 0)
+	if (nb_to_line == -1)
 	{
 		free(storage);
 		return (NULL);
 	}
-	i = ft_strlen(storage + nb_to_line);
+	while (storage[i + nb_to_line])
+		i++;
 	if (i == 0)
 	{
 		free(storage);
 		return (NULL);
 	}
 	tmp = malloc(sizeof(char) * (i + 1));
-	if (!tmp)
-		return (NULL);
 	tmp = ft_strcat("", storage + nb_to_line, tmp);
 	free(storage);
 	return (tmp);
@@ -93,16 +92,16 @@ char	*gnl_loop(char *storage, int fd)
 
 char	*get_next_line(int fd)
 {
-	static char	*storage;
+	static char	*storage[1024];
 	char		*buffer;
 
 	buffer = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	storage = gnl_loop(storage, fd);
-	buffer = dup_to_new_line(storage);
-	storage = new_storage(storage);
-	if (!storage && !buffer)
-		free(storage);
+	storage[fd] = gnl_loop(storage[fd], fd);
+	buffer = dup_to_new_line(storage[fd]);
+	storage[fd] = new_storage(storage[fd]);
+	if (!storage[fd] && !buffer)
+		free(storage[fd]);
 	return (buffer);
 }
