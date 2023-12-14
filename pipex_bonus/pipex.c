@@ -6,7 +6,7 @@
 /*   By: mhaouas <mhaouas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:06:08 by mhaouas           #+#    #+#             */
-/*   Updated: 2023/12/13 18:08:27 by mhaouas          ###   ########.fr       */
+/*   Updated: 2023/12/14 13:50:09 by mhaouas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,25 +18,38 @@ void	chain_process(int pipe_needed, int pipe_fd[3][2], t_pipex *pipe_struct,
 	pid_t	pid;
 	int		mirror_pipe;
 
+	ft_printf("Process number %d\n", pipe_struct->cmd_number);
 	if (pipe_needed == PIPE_FD_1)
 		mirror_pipe = PIPE_FD_2;
 	else
 		mirror_pipe = PIPE_FD_1;
+	if (pipe(pipe_fd[mirror_pipe]) == -1)
+		pipe_fd_check(1, pipe_fd, pipe_struct, envp);
 	pid = fork();
 	if (pid == -1)
 		fork_check(pipe_fd, pipe_struct, envp);
 	else if (pid == 0 && pipe_struct->cmd_number < pipe_struct->total_number_of_cmd)
 	{
+		ft_printf("Pipe needed : %d\nmirror pipe : %d\npid : %d\n", pipe_needed, mirror_pipe, pid);
 		if (pipe_needed == PIPE_FD_1)
+		{
 			inter_process(pipe_fd, PIPE_FD_1, pipe_struct, envp);
+		}
 		else if (pipe_needed == PIPE_FD_2)
+		{
 			inter_process(pipe_fd, PIPE_FD_2, pipe_struct, envp);
+		}
 	}
 	else if (pid == 0 && pipe_struct->cmd_number == pipe_struct->total_number_of_cmd)
-		parent_process(pipe_fd, pipe_struct->next, envp, pipe_needed);
-	else
 	{
-		wait(NULL);
+		ft_printf("parent process\n");
+		parent_process(pipe_fd, pipe_struct, envp, pipe_needed);
+	}
+	else if (pipe_struct->cmd_number != pipe_struct->total_number_of_cmd)
+	{
+		ft_printf("kskskskskskks\n");
+		//waitpid(pid, NULL, 0);
+		ft_printf("TEST\n");
 		chain_process(mirror_pipe, pipe_fd, pipe_struct->next, envp);
 	}
 }
@@ -45,21 +58,21 @@ void	next_process(int pipe_fd[3][2], t_pipex *pipe_struct, char **envp)
 {
 	pid_t	pid;
 
-	pid = fork();
-	if (pid == -1)
-		fork_check(pipe_fd, pipe_struct, envp);
-	else if (pid == 0 && pipe_struct->total_number_of_cmd == 2)
-		parent_process(pipe_fd, pipe_struct->next, envp, PIPE_FD_1);
-	else if (pid == 0 && pipe_struct->total_number_of_cmd != 2)
-		chain_process(PIPE_FD_1, pipe_fd, pipe_struct->next, envp);
-	else
+	if (pipe_struct->total_number_of_cmd == 2)
 	{
-		wait(NULL);
-		close_all_fd(pipe_fd[FD_INPUT]);
-		close_all_fd(pipe_fd[PIPE_FD_1]);
-		close_all_fd(pipe_fd[PIPE_FD_2]);
-		return ;
+		pid = fork();
+		if (pid == -1)
+			fork_check(pipe_fd, pipe_struct, envp);
+		if (pid == 0)
+			parent_process(pipe_fd, pipe_struct->next, envp, PIPE_FD_1);
+		else
+			wait(NULL);
 	}
+	else if (pipe_struct->total_number_of_cmd != 2)
+		chain_process(PIPE_FD_1, pipe_fd, pipe_struct->next, envp);
+	close_all_fd(pipe_fd[FD_INPUT]);
+	close_all_fd(pipe_fd[PIPE_FD_1]);
+	close_all_fd(pipe_fd[PIPE_FD_2]);
 }
 
 void	pipex(int argc, char **argv, char **envp, t_pipex *pipe_struct)
@@ -75,15 +88,19 @@ void	pipex(int argc, char **argv, char **envp, t_pipex *pipe_struct)
 		fd_input_check(pipe_fd[FD_INPUT], pipe_struct, WRITE_FD);
 	if (pipe(pipe_fd[PIPE_FD_1]) == -1)
 		pipe_fd_check(0, pipe_fd, pipe_struct, envp);
-	if (pipe(pipe_fd[PIPE_FD_2]) == -1)
-		pipe_fd_check(1, pipe_fd, pipe_struct, envp);
 	pid = fork();
 	if (pid == -1)
 		fork_check(pipe_fd, pipe_struct, envp);
 	else if (pid == 0)
+	{
+		ft_printf("process nuber %d\n", pipe_struct->cmd_number);
 		child_process(pipe_fd, pipe_struct, envp, PIPE_FD_1);
+	}
 	else
+	{
+		waitpid(pid, NULL, 0);
 		next_process(pipe_fd, pipe_struct, envp);
+	}
 }
 
 int	main(int argc, char **argv, char **envp)
