@@ -6,7 +6,7 @@
 /*   By: mhaouas <mhaouas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 18:40:57 by mhaouas           #+#    #+#             */
-/*   Updated: 2023/12/15 15:44:29 by mhaouas          ###   ########.fr       */
+/*   Updated: 2023/12/15 16:16:53 by mhaouas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ void	child_process(int fds[3][2], t_pipex *pipe_struct, char **envp,
 		dup_error(envp, fds);
 		error_handler(DUP_ERROR);
 	}
-	close(fds[pipe_number][READ_FD]);
-	close(fds[FD_INPUT][WRITE_FD]);
+	close_all_fd(fds[pipe_number]);
+	close_all_fd(fds[FD_INPUT]);
 	if (execve(pipe_struct->command, pipe_struct->flags, envp) == -1)
 	{
 		dup_error(envp, fds);
@@ -56,8 +56,8 @@ void	parent_process(int fds[3][2], t_pipex *pipe_struct, char **envp,
 		dup_error(envp, fds);
 		error_handler(DUP_ERROR);
 	}
-	close(fds[pipe_number][WRITE_FD]);
-	close(fds[FD_INPUT][READ_FD]);
+	close_all_fd(fds[pipe_number]);
+	close_all_fd(fds[FD_INPUT]);
 	if (execve(pipe_struct->command, pipe_struct->flags, envp) == -1)
 	{
 		dup_error(envp, fds);
@@ -85,8 +85,9 @@ void	inter_process(int fds[3][2], int pipe_number, t_pipex *pipe_struct,
 		dup_error(envp, fds);
 		error_handler(DUP_ERROR);
 	}
-	close(fds[pipe_number][WRITE_FD]);
-	close(fds[mirror_pipe][READ_FD]);
+	close_all_fd(fds[pipe_number]);
+	close_all_fd(fds[mirror_pipe]);
+	close_all_fd(fds[FD_INPUT]);
 	if (execve(pipe_struct->command, pipe_struct->flags, envp) == -1)
 	{
 		dup_error(envp, fds);

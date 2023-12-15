@@ -6,7 +6,7 @@
 /*   By: mhaouas <mhaouas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:06:08 by mhaouas           #+#    #+#             */
-/*   Updated: 2023/12/15 15:45:10 by mhaouas          ###   ########.fr       */
+/*   Updated: 2023/12/15 16:39:47 by mhaouas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,9 @@ void	chain_process(int pipe_needed, int pipe_fd[3][2], t_pipex *pipe_struct,
 		}
 		else
 		{
+			printf("pid : %d \n", pipe_struct->pid);
 			chain_process(mirror_pipe, pipe_fd, pipe_struct->next, envp);
-			waitpid(pipe_struct->pid, NULL, 0);
+			waitpid(pipe_struct->pid, NULL, WUNTRACED);
 		}
 	}
 	else if (pipe_struct->cmd_number == pipe_struct->total_number_of_cmd)
@@ -46,9 +47,8 @@ void	chain_process(int pipe_needed, int pipe_fd[3][2], t_pipex *pipe_struct,
 			parent_process(pipe_fd, pipe_struct, envp, pipe_needed);
 		else
 		{
-			close(pipe_fd[FD_INPUT][READ_FD]);
-			close(pipe_fd[pipe_needed][WRITE_FD]);
-			waitpid(pipe_struct->pid, NULL, 0);
+			printf("pid : %d \n", pipe_struct->pid);
+			waitpid(pipe_struct->pid, NULL, WUNTRACED);
 		}
 	}
 }
@@ -70,6 +70,9 @@ void	next_process(int pipe_fd[3][2], t_pipex *pipe_struct, char **envp)
 		if (pipe(pipe_fd[PIPE_FD_2]) == -1)
 			pipe_fd_check(1, pipe_fd, pipe_struct, envp);
 		chain_process(PIPE_FD_1, pipe_fd, pipe_struct, envp);
+		close_all_fd(pipe_fd[FD_INPUT]);
+		close_all_fd(pipe_fd[PIPE_FD_1]);
+		close_all_fd(pipe_fd[PIPE_FD_2]);
 	}
 }
 
@@ -96,9 +99,7 @@ void	pipex(int argc, char **argv, char **envp, t_pipex *pipe_struct)
 		//printf("waiting process %d\n", pipe_struct->cmd_number);
 		waitpid(-pipe_struct->pid, NULL, 0);
 	}
-	close_all_fd(pipe_fd[FD_INPUT]);
-	close_all_fd(pipe_fd[PIPE_FD_1]);
-	close_all_fd(pipe_fd[PIPE_FD_2]);
+
 }
 
 int	main(int argc, char **argv, char **envp)
