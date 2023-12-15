@@ -6,7 +6,7 @@
 /*   By: mhaouas <mhaouas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/30 16:46:04 by mhaouas           #+#    #+#             */
-/*   Updated: 2023/12/14 11:44:12 by mhaouas          ###   ########.fr       */
+/*   Updated: 2023/12/14 15:27:36 by mhaouas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,12 @@ enum e_error {
 /*============ STRUCT ===========*/
 typedef struct s_pipex
 {
-	char	*command;
-	char	**flags;
-	int		cmd_number;
-	int		total_number_of_cmd;
-	void	*next;
+	char			*command;
+	char			**flags;
+	int				cmd_number;
+	int				total_number_of_cmd;
+	pid_t			pid;
+	struct s_pipex	*next;
 }			t_pipex;
 
 /*========== PROTOTYPE ==========*/
