@@ -6,7 +6,7 @@
 /*   By: mhaouas <mhaouas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/29 19:06:08 by mhaouas           #+#    #+#             */
-/*   Updated: 2023/12/15 16:39:47 by mhaouas          ###   ########.fr       */
+/*   Updated: 2023/12/15 17:26:16 by mhaouas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	chain_process(int pipe_needed, int pipe_fd[3][2], t_pipex *pipe_struct,
 		mirror_pipe = PIPE_FD_2;
 	else
 		mirror_pipe = PIPE_FD_1;
-	pipe_struct->pid = fork();
+	pipe_struct->pid = fork() - pipe_struct->cmd_number;
 	if (pipe_struct->pid == -1)
 		fork_check(pipe_fd, pipe_struct, envp);
 	if (pipe_struct->cmd_number < pipe_struct->total_number_of_cmd)
@@ -36,9 +36,8 @@ void	chain_process(int pipe_needed, int pipe_fd[3][2], t_pipex *pipe_struct,
 		}
 		else
 		{
-			printf("pid : %d \n", pipe_struct->pid);
 			chain_process(mirror_pipe, pipe_fd, pipe_struct->next, envp);
-			waitpid(pipe_struct->pid, NULL, WUNTRACED);
+			wait(NULL);
 		}
 	}
 	else if (pipe_struct->cmd_number == pipe_struct->total_number_of_cmd)
@@ -47,8 +46,7 @@ void	chain_process(int pipe_needed, int pipe_fd[3][2], t_pipex *pipe_struct,
 			parent_process(pipe_fd, pipe_struct, envp, pipe_needed);
 		else
 		{
-			printf("pid : %d \n", pipe_struct->pid);
-			waitpid(pipe_struct->pid, NULL, WUNTRACED);
+			wait(NULL);
 		}
 	}
 }
@@ -95,9 +93,10 @@ void	pipex(int argc, char **argv, char **envp, t_pipex *pipe_struct)
 		child_process(pipe_fd, pipe_struct, envp, PIPE_FD_1);
 	else
 	{
+		pipe_struct->next->pid = pipe_struct->pid;
 		next_process(pipe_fd, pipe_struct->next, envp);
 		//printf("waiting process %d\n", pipe_struct->cmd_number);
-		waitpid(-pipe_struct->pid, NULL, 0);
+		waitpid(pipe_struct->pid - - pipe_struct->cmd_number, NULL, 0);
 	}
 
 }
