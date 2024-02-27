@@ -7,9 +7,9 @@
 [submodule "get_next_line"]
 	path = get_next_line
 	url = git@github.com:Xeotham/get_next_line.git
-[submodule "pipex"]
-	path = pipex
-	url = git@github.com:Xeotham/pipex.git
 [submodule "push_swap"]
 	path = push_swap
 	url = git@github.com:Xeotham/push_swap.git
+[submodule "fdf"]
+	path = fdf
+	url = git@github.com:Xeotham/fdf.git
